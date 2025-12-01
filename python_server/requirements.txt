@@ -1,0 +1,4 @@
+# GPS Tracking Server Dependencies
+asyncio-mqtt>=0.16.0
+pyyaml>=6.0
+typing-extensions>=4.0.0
