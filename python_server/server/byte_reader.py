@@ -48,13 +48,13 @@ class ByteReader:
     
     def get_short(self) -> int:
         """Get signed 16-bit integer (big-endian)."""
-        data = self.get(2, reverse=True)
-        return struct.unpack('>h', bytes(reversed(data)))[0]
+        data = self.get(2)
+        return struct.unpack('>h', data)[0]
     
     def get_ushort(self) -> int:
         """Get unsigned 16-bit integer (big-endian)."""
-        data = self.get(2, reverse=True)
-        return struct.unpack('>H', bytes(reversed(data)))[0]
+        data = self.get(2)
+        return struct.unpack('>H', data)[0]
     
     def get_int(self) -> int:
         """Get signed 32-bit integer (little-endian)."""
