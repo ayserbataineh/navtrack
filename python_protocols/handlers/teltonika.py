@@ -20,7 +20,7 @@ Message Format:
 - 4 bytes: CRC-16
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import IntEnum
 from typing import List, Optional, Dict
 from ..device_message import DeviceMessage
@@ -219,7 +219,7 @@ class TeltonikaMessageHandler(BaseMessageHandler):
         
         # Timestamp (8 bytes, milliseconds since epoch)
         timestamp = reader.get_ulong()
-        message.date = datetime.utcfromtimestamp(timestamp / 1000)
+        message.date = datetime.fromtimestamp(timestamp / 1000, tz=timezone.utc)
         
         # Priority (1 byte)
         priority = reader.get_one()

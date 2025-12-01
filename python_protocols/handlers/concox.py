@@ -74,6 +74,18 @@ class ConcoxMessageHandler(BaseMessageHandler):
         self._serial_number: int = 0
         self._pending_response: Optional[bytes] = None
     
+    def _is_valid_message_start(self, data: bytes) -> bool:
+        """
+        Check if the data starts with a valid Concox message header.
+        
+        Args:
+            data: Raw byte data to check
+            
+        Returns:
+            True if valid message start, False otherwise
+        """
+        return data.startswith(self.START_STANDARD) or data.startswith(self.START_EXTENDED)
+    
     def parse_range(self, data: bytes) -> List[DeviceMessage]:
         """
         Parse Concox message data.
@@ -85,7 +97,7 @@ class ConcoxMessageHandler(BaseMessageHandler):
             List of parsed DeviceMessage objects
         """
         # Check for valid message start
-        if not data.startswith(self.START_STANDARD) and not data.startswith(self.START_EXTENDED):
+        if not self._is_valid_message_start(data):
             return []
         
         is_extended = data.startswith(self.START_EXTENDED)

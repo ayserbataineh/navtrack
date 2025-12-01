@@ -5,7 +5,7 @@ This module provides common utility functions used across protocol handlers
 for parsing GPS tracking data.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Tuple
 import struct
 
@@ -209,8 +209,8 @@ def unix_timestamp_to_datetime(timestamp: int, milliseconds: bool = False) -> da
         datetime object
     """
     if milliseconds:
-        return datetime.utcfromtimestamp(timestamp / 1000)
-    return datetime.utcfromtimestamp(timestamp)
+        return datetime.fromtimestamp(timestamp / 1000, tz=timezone.utc)
+    return datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
 
 def calculate_crc16(data: bytes, polynomial: int = 0xA001, initial: int = 0xFFFF) -> int:
@@ -330,7 +330,9 @@ class ByteReader:
         while self._position < len(self._data) and self._data[self._position] != terminator:
             self._position += 1
         value = self._data[start:self._position]
-        self._position += 1  # Skip terminator
+        # Only skip terminator if it was found and we're not at end of data
+        if self._position < len(self._data) and self._data[self._position] == terminator:
+            self._position += 1
         return value
     
     def get_short(self, little_endian: bool = False) -> int:
